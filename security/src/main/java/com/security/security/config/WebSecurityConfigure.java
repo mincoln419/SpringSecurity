@@ -2,58 +2,57 @@ package com.security.security.config;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 //import static org.springframework.security.config.Customizer.withDefaults;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
+import org.springframework.security.web.savedrequest.SavedRequest;
 
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfigure {
 
-	@Autowired
-	UserDetailsService detailsService;
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .authorizeHttpRequests()
-            .anyRequest()
-            .authenticated();
+//        http
+//            .authorizeHttpRequests()
+//            .anyRequest()
+//            .authenticated();
 
         http
         	.formLogin()
-        	//.loginPage("/loginPage")
-        	.defaultSuccessUrl("/")
-        	.failureUrl("/login")
-        	//.usernameParameter("userId")
-        	//.passwordParameter("passwd")
-        	//.loginProcessingUrl("login_proc")
-        	.successHandler((req, res, auth)->{
-        		System.out.println("authentication " + auth.getName());
-        		res.sendRedirect("/");
+//        	//.loginPage("/loginPage")
+//        	.defaultSuccessUrl("/")
+//        	.failureUrl("/login")
+//        	//.usernameParameter("userId")
+//        	//.passwordParameter("passwd")
+//        	//.loginProcessingUrl("login_proc")
+       		.successHandler((req, res, auth)->{
+       			
+       			RequestCache cache = new HttpSessionRequestCache();
+       			SavedRequest savedRequest =  cache.getRequest(req, res);
+       			String redirectUrl = savedRequest.getRedirectUrl();
+       			
+       			System.out.println("authentication " + auth.getName());
+       			
+       			res.sendRedirect(redirectUrl);
+        		
         	})
-        	.failureHandler((req, res, ex)->{
-        		System.out.println("exception " + ex.getMessage());
-        		res.sendRedirect("/login");
-        	})
-        	.permitAll()
+//        	.failureHandler((req, res, ex)->{
+//        		System.out.println("exception " + ex.getMessage());
+//        		res.sendRedirect("/login");
+//        	})
+//        	.permitAll()
         	;
 
         http
@@ -74,7 +73,6 @@ public class WebSecurityConfigure {
         	.rememberMe()
         	.rememberMeParameter("remember")
         	.tokenValiditySeconds(3600)
-        	.userDetailsService(detailsService)
         	;
 
         http
@@ -94,16 +92,40 @@ public class WebSecurityConfigure {
         	.sessionManagement()
         	.sessionCreationPolicy(SessionCreationPolicy.ALWAYS);
 
+//        http
+//        	.antMatcher("/shop/**")
+//        	.authorizeRequests()
+//        		.antMatchers("/shop/login","/shop/user/**").permitAll()
+//        		.antMatchers("/shop/login","/shop/user/**").hasRole("USER")
+//        		.antMatchers("/shop/login","/shop/admin/pay").access("hasRole('ADMIN')")
+//        		.antMatchers("/shop/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
+//        		.anyRequest().authenticated()
+//        		;
+        
+        
         http
-        	.antMatcher("/shop/**")
-        	.authorizeRequests()
-        		.antMatchers("/shop/login","/shop/user/**").permitAll()
-        		.antMatchers("/shop/login","/shop/user/**").hasRole("USER")
-        		.antMatchers("/shop/login","/shop/admin/pay").access("hasRole('ADMIN')")
-        		.antMatchers("/shop/admin/**").access("hasRole('ADMIN') or hasRole('SYS')")
-        		.anyRequest().authenticated()
-        		;
+    	.antMatcher("/**")
+    	.authorizeRequests()
+    		.antMatchers("/login").permitAll()
+    		.antMatchers("/user").hasRole("USER")
+    		.antMatchers("/admin/**").access("hasRole('ADMIN') or hasRole('SYS')") // 순서에 따라서 달라질 수 있음 - 순서 중요
+    		.antMatchers("/admin/pay").access("hasRole('ADMIN')")
+    		.anyRequest().authenticated()
+    		;
+        
+        //구체적인 범위가 위에 와야 인가처리가 정확하게 될 수 있음.
 
+        http
+        	.exceptionHandling()
+//        	.authenticationEntryPoint((req, res, ex)->{
+//        		res.sendRedirect("/login");
+//        	})
+			.accessDeniedHandler((req, res, ex)->{
+				res.sendRedirect("/denied");
+			});
+        
+        
+        
         return http.build();
     }
 
