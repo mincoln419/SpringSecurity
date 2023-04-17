@@ -15,9 +15,10 @@ public class WebSecurityConf2 {
     protected SecurityFilterChain securityFilterChain2(HttpSecurity http) throws Exception {
 
         http
-                .antMatcher("/users/**")
                 .authorizeRequests()
-                .anyRequest().hasRole("ADMIN");
+                .anyRequest().permitAll()
+                .and()
+                .formLogin();
 
         return http.build();
     }

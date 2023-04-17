@@ -13,10 +13,11 @@ public class WebSecurityConf1 {
     @Bean
     protected SecurityFilterChain filterChain1(HttpSecurity http) throws Exception {
         http
+                .antMatcher("/admin/**")
                 .authorizeRequests()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
-                .formLogin();
+                .httpBasic();
 
         return http.build();
     }
