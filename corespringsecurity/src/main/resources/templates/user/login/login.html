@@ -10,6 +10,7 @@
     		<p>아이디와 비밀번호를 입력해주세요</p>
     	</div>
         <form th:action="@{/login_proc}" class="form-signin" method="post">
+        	<input th:type="hidden" th:value="secret" name="secret_key">
             <div class="form-group">
                 <label for="username" class="control-label">아이디</label>
                 <input type="text" class="form-control input-large" name="username" id="username" placeholder="아이디" required autofocus="autofocus">
