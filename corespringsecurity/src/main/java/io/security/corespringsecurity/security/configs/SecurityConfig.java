@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import io.security.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //	private UserDetailsService userDetailsService;
 
 	@Autowired
-	CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+	private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+
+	@Autowired
+	private CustomAuthenticationFailureHandler authenticationFailureHandler;
+
 
 
 	@SuppressWarnings("rawtypes")
@@ -63,7 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/","/users","/user/login/**").permitAll()
+                .antMatchers("/","/users","/user/login/**","/login").permitAll()
                 .antMatchers("/mypage").hasRole("USER")
                 .antMatchers("/messages").hasRole("MANAGER")
                 .antMatchers("/config").hasRole("ADMIN")
@@ -76,6 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationDetailsSource(authenticationDetailsSource)
                 .defaultSuccessUrl("/")
                 .successHandler(authenticationSuccessHandler)
+                .failureHandler(authenticationFailureHandler)
                 .permitAll()
                 ;
     }
