@@ -10,7 +10,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import io.security.corespringsecurity.domain.AccountContext;
+import io.security.corespringsecurity.domain.entity.AccountContext;
 import io.security.corespringsecurity.security.common.FormWebAuthenticationDetails;
 
 public class CustomAuthenticationProvider implements AuthenticationProvider {

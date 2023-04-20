@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import io.security.corespringsecurity.domain.AccountContext;
+import io.security.corespringsecurity.domain.entity.AccountContext;
 import io.security.corespringsecurity.security.token.AjaxAuthenticationToken;
 
 @Component
