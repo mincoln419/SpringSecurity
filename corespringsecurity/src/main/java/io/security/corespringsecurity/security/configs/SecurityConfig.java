@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -25,6 +26,7 @@ import io.security.corespringsecurity.security.handler.CustomAuthenticationSucce
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import lombok.extern.slf4j.Slf4j;
 
+@Order(1)
 @Configuration
 @EnableWebSecurity
 @Slf4j
@@ -39,8 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private CustomAuthenticationFailureHandler authenticationFailureHandler;
-
-
 
 	@SuppressWarnings("rawtypes")
 	@Autowired
@@ -61,19 +61,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return new CustomAuthenticationProvider();
 	}
 
-
-	@Override
-		public AuthenticationManager authenticationManagerBean() throws Exception {
-			return super.authenticationManagerBean();
-		}
-
-
-	@Bean
-	public AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
-		AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter();
-		ajaxLoginProcessingFilter.setAuthenticationManager(authenticationManagerBean());
-		return ajaxLoginProcessingFilter;
-	}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -111,10 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         		.accessDeniedPage("/denied")
         		.accessDeniedHandler(accessDeniedHandler())
         		;
-        http
-        		.addFilterBefore(ajaxLoginProcessingFilter(), UsernamePasswordAuthenticationFilter.class)
-        		.csrf().disable()
-        ;
+
     }
 
     @Bean
