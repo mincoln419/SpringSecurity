@@ -6,20 +6,27 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.stereotype.Component;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-@Component
-public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler{
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.security.corespringsecurity.domain.Account;
+
+public class AjaxFailureHandler implements AuthenticationFailureHandler {
+
+	private ObjectMapper mapper = new ObjectMapper();
 
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-
 		String errorMessage = "Invalid Username or Password";
 
 
@@ -31,9 +38,10 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
 			errorMessage = "Lock";
 		}
 
-		setDefaultFailureUrl("/login?error=true&exception=" + errorMessage);
+		response.setStatus(HttpStatus.UNAUTHORIZED.value());
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-		super.onAuthenticationFailure(request, response, exception);
+		mapper.writeValue(response.getWriter(), errorMessage);
 	}
 
 

@@ -9,9 +9,13 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import io.security.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
+import io.security.corespringsecurity.security.handler.AjaxFailureHandler;
+import io.security.corespringsecurity.security.handler.AjaxSuccessHandler;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 
 @Order(0)
@@ -51,6 +55,19 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter{
 	public AjaxLoginProcessingFilter ajaxLoginProcessingFilter() throws Exception {
 		AjaxLoginProcessingFilter ajaxLoginProcessingFilter = new AjaxLoginProcessingFilter();
 		ajaxLoginProcessingFilter.setAuthenticationManager(authenticationManagerBean());
+		ajaxLoginProcessingFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
+		ajaxLoginProcessingFilter.setAuthenticationFailureHandler(authenticationFailureHandler());
 		return ajaxLoginProcessingFilter;
 	}
+
+	@Bean
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
+		return new AjaxSuccessHandler();
+	}
+
+	@Bean
+	public AuthenticationFailureHandler authenticationFailureHandler() {
+		return new AjaxFailureHandler();
+	}
+
 }
