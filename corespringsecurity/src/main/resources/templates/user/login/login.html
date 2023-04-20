@@ -1,9 +1,43 @@
 <html  xmlns:th="http:www.thymeleaf.org">
+
+<meta id="_csrf" name="_csrf" th:content="${_csrf.token}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.headerName}"/>
+
 <head th:replace="layout/header::userHead"></head>
 <body>
 <div th:replace="layout/top::header"></div>
 <body>
+<script>
+	function formLogin(e){
+		var username = $("input[name='username']").val().trim();
+		var password = $("input[name='password']").val().trim();
+		var data = {"username" : username, "password" : password}
 
+		var csrfHeader = $('meta[name="_csrf_header"]').attr('content');
+		var csrfToken = $('meta[name="_csrf"]').attr('content');
+
+		$.ajax({
+			type: "post",
+			url: "/api/login",
+			data: JSON.stringify(data),
+			dataType: "json",
+			beforeSend: function(xhr){
+				xhr.setRequestHeader(csrfHeader, csrfToken);
+				xhr.setRequestHeader("X-Request-With", "XMLHttpRequest");
+				xhr.setRequestHeader("Content-type", "application/json");
+			},
+			success:function(data){
+				console.log(data);
+				window.location = "/";
+			},
+			error:function(xhr, status, error){
+				console.log(error);
+				window.location = "/login?error=true&exception=" + xhr.responseText;
+			}
+		});
+	}
+
+</script>
 <div class="container d-flex justify-content-center">
     <div class="col-sm-5" style="margin-top: 30px;">
     	<div class="panel">
@@ -23,7 +57,7 @@
                 <label for="password" class="control-label">비밀번호</label>
 				<input type="password" class="form-control input-large" name="password" id="password" placeholder="Password" data-minlength="6" required>
             </div>
-            <button type="submit" class="btn btn-lg btn-primary btn-block">로그인</button>
+            <button type="button" class="btn btn-lg btn-primary btn-block" onclick="formLogin(this)">로그인</button>
         </form>
     </div>
 </div>
