@@ -13,7 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
+import io.security.corespringsecurity.security.handler.CustomAcessDeniedHandler;
 import io.security.corespringsecurity.security.handler.CustomAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.CustomAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
@@ -84,5 +86,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureHandler(authenticationFailureHandler)
                 .permitAll()
                 ;
+        http
+        		.exceptionHandling()
+        		.accessDeniedHandler(accessDeniedHandler())
+        ;
     }
+
+    @Bean
+	public AccessDeniedHandler accessDeniedHandler() {
+    	CustomAcessDeniedHandler accessDeniedHandler = new CustomAcessDeniedHandler();
+    	accessDeniedHandler.setErrorPage("/denied");
+		return accessDeniedHandler;
+	}
 }
