@@ -2,6 +2,7 @@ package io.security.corespringsecurity.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,8 +30,12 @@ public class CustomUserDetailsService implements UserDetailsService{
 		if(account == null) {
 			throw new UsernameNotFoundException(username);
 		}
-		List<GrantedAuthority> roles = new ArrayList<>();
-		roles.add(new SimpleGrantedAuthority(account.getRole()));
+		List<GrantedAuthority> roles = account.getUserRoles()
+					.stream()
+					.map(userRole -> userRole.getRoleName())
+					.collect(Collectors.toSet())
+					.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
 		AccountContext accountContext = new AccountContext(account, roles);
 
 		return accountContext;

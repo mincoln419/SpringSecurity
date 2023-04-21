@@ -1,21 +1,54 @@
 package io.security.corespringsecurity.domain.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 
 @Entity
 @Data
-public class Account {
+@ToString(exclude= {"userRoles"})
+@Builder
+@EqualsAndHashCode(of = "id")
+@NoArgsConstructor
+@AllArgsConstructor
+public class Account implements Serializable{
 
     @Id
     @GeneratedValue
-    private Long Id;
+    private Long id;
+
+    @Column
     private String username;
-    private String password;
+
+    @Column
     private String email;
-    private String age;
-    private String role;
+
+    @Column
+    private int age;
+
+    @Column
+    private String password;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.ALL})
+    @JoinTable(name = "account_roles", joinColumns = {@JoinColumn(name = "account_id")}
+    		,inverseJoinColumns = {@JoinColumn(name = "role_id")}
+    		)
+    private Set<Role> userRoles = new HashSet<>();
 }
