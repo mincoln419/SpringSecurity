@@ -21,7 +21,7 @@ import io.security.corespringsecurity.security.handler.AjaxFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxSuccessHandler;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 
-@Order(0)
+@Order(3)
 @Configuration
 public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter{
 
