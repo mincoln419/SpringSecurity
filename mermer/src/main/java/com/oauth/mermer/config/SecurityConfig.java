@@ -21,7 +21,7 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.authorizeHttpRequests().anyRequest().authenticated();
 //		http.formLogin();
-		http.httpBasic();//.authenticationEntryPoint(new CustomAuthenticationEntryPoint());
+		http.httpBasic().authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 //		http.exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
 //
