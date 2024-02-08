@@ -18,11 +18,8 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 @Import(OAuth2AuthorizationServerConfiguration.class)
 public class AuthorizationConfig1 {
 
-
-
 	@Bean
 	public AuthorizationServerSettings providerSettings() {
-
 		return AuthorizationServerSettings.builder()
 				.issuer("http://localhost:90000")
 				.build();
