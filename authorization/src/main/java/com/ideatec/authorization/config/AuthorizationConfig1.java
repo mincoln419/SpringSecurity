@@ -14,8 +14,8 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
 
-@Configuration
-@Import(OAuth2AuthorizationServerConfiguration.class)
+//@Configuration
+//@Import(OAuth2AuthorizationServerConfiguration.class)
 public class AuthorizationConfig1 {
 
 	@Bean
