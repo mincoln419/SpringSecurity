@@ -1,0 +1,11 @@
+server:
+  port: 9000
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jws-algorithms: RS256
+          public-key-location: classpath:certs/publickKey.txt
+          #jwk-set-uri: http://localhost:8080/realms/oauth2/protocol/openid-connect/certs
+
